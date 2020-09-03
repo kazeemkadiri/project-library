@@ -65,6 +65,12 @@ MongoClient.connect(MONGODB_CONNECTION_STRING,((err,client) => {
       var bookid = req.params.id;
       var comment = req.body.comment;
       //json res format same as .get
+      collection.update({_id: ObjectId(bookid)},
+        {$push:{comments:comment}},(err, result)=>{
+        if(err)console.log(err);
+        console.log(result);
+        res.json(result);
+      });
     })
     
     .delete(function(req, res){
