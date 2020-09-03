@@ -16,15 +16,30 @@ const MONGODB_CONNECTION_STRING = process.env.DB;
 
 module.exports = function (app) {
 
+MongoClient.connect(MONGODB_CONNECTION_STRING,((err,client) => {
+  const collection = client.db("personal-library").collection("books");
+  // perform actions on the collection object
+
   app.route('/api/books')
     .get(function (req, res){
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+      collection.find({}).toArray((err, docs)=>{
+   	  if(err) console.log(err);
+
+          res.json(docs);
+      });
     })
     
     .post(function (req, res){
       var title = req.body.title;
       //response will contain new book object including atleast _id and title
+
+      collection.insertOne({title},(err, result)=>{
+        if(err) console.log(err);
+
+     	res.json(result.ops[0]);
+      });
     })
     
     .delete(function(req, res){
@@ -49,5 +64,12 @@ module.exports = function (app) {
       var bookid = req.params.id;
       //if successful response will be 'delete successful'
     });
-  
+
+    app.use((req,res,next)=>{
+      res.status(404)
+   	 .type('text')
+ 	 .send('Not Found');
+    });
+
+  }));  
 };
