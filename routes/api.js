@@ -51,6 +51,13 @@ MongoClient.connect(MONGODB_CONNECTION_STRING,((err,client) => {
   app.route('/api/books/:id')
     .get(function (req, res){
       var bookid = req.params.id;
+
+      collection.find({_id: ObjectId(bookid)})
+        .toArray((err, result)=>{
+ 	  if(err)console.log(err);
+
+          res.json(result);
+        });
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
     
