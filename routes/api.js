@@ -33,9 +33,10 @@ MongoClient.connect(MONGODB_CONNECTION_STRING,((err,client) => {
     
     .post(function (req, res){
       var title = req.body.title;
+      const comments = [];
       //response will contain new book object including atleast _id and title
 
-      collection.insertOne({title},(err, result)=>{
+      collection.insertOne({title, comments},(err, result)=>{
         if(err) console.log(err);
 
      	res.json(result.ops[0]);
@@ -76,6 +77,8 @@ MongoClient.connect(MONGODB_CONNECTION_STRING,((err,client) => {
     .delete(function(req, res){
       var bookid = req.params.id;
       //if successful response will be 'delete successful'
+      const result = collection.deleteOne({_id: ObjectId(bookid)});
+      console.log(result);
     });
 
     app.use((req,res,next)=>{
