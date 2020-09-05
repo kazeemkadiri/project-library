@@ -45,6 +45,14 @@ MongoClient.connect(MONGODB_CONNECTION_STRING,((err,client) => {
     
     .delete(function(req, res){
       //if successful response will be 'complete delete successful'
+      collection.deleteMany({},(err, result)=>{
+        if(err)console.log(err);
+        
+        res.send(result.result.n >= 1 
+  	  ? "complete delete successful"
+	  : "Deletion failed"
+ 	);
+      });
     });
 
 
@@ -77,8 +85,12 @@ MongoClient.connect(MONGODB_CONNECTION_STRING,((err,client) => {
     .delete(function(req, res){
       var bookid = req.params.id;
       //if successful response will be 'delete successful'
-      const result = collection.deleteOne({_id: ObjectId(bookid)});
-      console.log(result);
+      collection.deleteOne({_id: ObjectId(bookid)},
+        (err,result)=>{
+          if(err)console.log(err);
+          console.log(result);
+          res.send("delete successful");
+      });
     });
 
     app.use((req,res,next)=>{
